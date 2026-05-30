@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalyan Dev | AI Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome for high-tech icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        darkBg: '#030712',
+                        neonCyan: '#06b6d4',
+                        neonPurple: '#a855f7',
+                        neonPink: '#ec4899',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar matching the dark cyber-theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #a855f7, #06b6d4);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #ec4899, #a855f7);
+        }
+
+        /* Glassmorphism panel base */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Neon gradient text and border glow */
+        .text-gradient-purple-cyan {
+            background: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .text-gradient-cyan-pink {
+            background: linear-gradient(135deg, #06b6d4 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Fancy hover shadow glows */
+        .hover-neon-cyan:hover {
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.4);
+            border-color: rgba(6, 182, 212, 0.8);
+        }
+        .hover-neon-purple:hover {
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
+            border-color: rgba(168, 85, 247, 0.8);
+        }
+
+        /* Radial glow hover tracking effect for skill cards */
+        .glow-card {
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease;
+        }
+        .glow-card:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+        .glow-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255,255,255,0.06), transparent 40%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Particle background Canvas styling */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Animation trigger classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Spinning glow circles for Hero background */
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1) translate(0px, 0px); opacity: 0.5; }
+            33% { transform: scale(1.1) translate(30px, -50px); opacity: 0.7; }
+            66% { transform: scale(0.9) translate(-20px, 20px); opacity: 0.4; }
+        }
+        .animate-pulse-glow-1 {
+            animation: pulseGlow 15s infinite alternate;
+        }
+        .animate-pulse-glow-2 {
+            animation: pulseGlow 20s infinite alternate-reverse;
+        }
+    </style>
+</head>
+<body class="bg-[#030712] text-slate-100 font-sans min-h-screen relative overflow-x-hidden">
+
+    <!-- Interactive Particle Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Header / Nav -->
+    <header class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 py-4">
+        <nav class="max-w-7xl mx-auto glass-panel rounded-2xl px-6 py-3 flex items-center justify-between border border-white/10">
+            <!-- Logo -->
+            <a href="#hero" class="flex items-center gap-2 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform">
+                    K
+                </div>
+                <span class="text-white font-extrabold tracking-wider text-lg hidden sm:inline-block">KALYAN<span class="text-cyan-400">.AI</span></span>
+            </a>
+
+            <!-- Navigation Links -->
+            <div class="flex items-center gap-1 sm:gap-6 text-sm font-medium">
+                <a href="#skills" class="text-slate-300 hover:text-cyan-400 px-3 py-1.5 rounded-lg transition-colors">Направления</a>
+                <a href="#about" class="text-slate-300 hover:text-purple-400 px-3 py-1.5 rounded-lg transition-colors">Обо мне</a>
+                <a href="#contacts" class="text-slate-300 hover:text-pink-400 px-3 py-1.5 rounded-lg transition-colors">Контакты</a>
+            </div>
+
+            <!-- CTA Button -->
+            <a href="#contacts" class="hidden md:inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 hover:border-cyan-500/50 hover:bg-cyan-500/10 rounded-xl text-xs font-semibold uppercase tracking-wider text-cyan-300 transition-all shadow-md shadow-cyan-950/20">
+                <span>Обсудить проект</span> <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center px-4 pt-24 overflow-hidden z-10">
+        <!-- Giant Glowing Ambient Circles -->
+        <div class="absolute top-[20%] left-[10%] w-[30vw] h-[30vw] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse-glow-1"></div>
+        <div class="absolute bottom-[20%] right-[10%] w-[35vw] h-[35vw] bg-cyan-600/15 rounded-full blur-[150px] pointer-events-none animate-pulse-glow-2"></div>
+
+        <div class="max-w-5xl mx-auto text-center relative z-10">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-cyan-300 font-semibold mb-6 tracking-wide uppercase shadow-lg shadow-black/40">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                Vibe Coding & AI Future Developer
+            </div>
+
+            <!-- Title -->
+            <h1 class="text-4xl sm:text-6xl md:text-8xl font-black tracking-tight leading-none mb-6">
+                Привет, я <span class="text-gradient-purple-cyan">Калян</span><br>
+                <span class="text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-400 mt-2 block">
+                    Укротитель AI и будущий СТО
+                </span>
+            </h1>
+
+            <!-- Description -->
+            <p class="text-slate-400 text-base sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-light">
+                Создаю крутые проекты на стыке искусственного интеллекта, виртуальных миров и мобильных решений. Пока другие пишут скучный код — я нахожусь в потоке <span class="text-white font-semibold">Vibe Coding</span>.
+            </p>
+
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#skills" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 rounded-xl font-bold text-white shadow-xl shadow-cyan-500/20 hover:shadow-cyan-400/35 hover:-translate-y-0.5 transition-all text-center">
+                    Мои проекты <i class="fa-solid fa-rocket ml-2"></i>
+                </a>
+                <a href="#about" class="w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl font-bold text-slate-200 transition-all text-center">
+                    Обо мне <i class="fa-solid fa-user-astronaut ml-2"></i>
+                </a>
+            </div>
+
+            <!-- Stats/Highlights Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-20 max-w-4xl mx-auto text-left">
+                <div class="glass-panel p-5 rounded-2xl border-white/5 hover:border-purple-500/30 transition-all">
+                    <div class="text-3xl font-black text-white">5+</div>
+                    <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider">Направлений IT</div>
+                </div>
+                <div class="glass-panel p-5 rounded-2xl border-white/5 hover:border-cyan-500/30 transition-all">
+                    <div class="text-3xl font-black text-white">20+</div>
+                    <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider">Smart-сценариев</div>
+                </div>
+                <div class="glass-panel p-5 rounded-2xl border-white/5 hover:border-pink-500/30 transition-all">
+                    <div class="text-3xl font-black text-white">100%</div>
+                    <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider">AI Погружение</div>
+                </div>
+                <div class="glass-panel p-5 rounded-2xl border-white/5 hover:border-cyan-500/30 transition-all">
+                    <div class="text-3xl font-black text-white">3D</div>
+                    <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider">Моделирование</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wave / Transition element -->
+        <div class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-[#030712] to-transparent pointer-events-none"></div>
+    </section>
+
+    <!-- Skills and Projects Section -->
+    <section id="skills" class="py-24 px-4 relative z-10 max-w-7xl mx-auto">
+        <div class="text-center mb-16 reveal">
+            <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight mb-4">
+                Мои <span class="text-gradient-cyan-pink">Направления & Проекты</span>
+            </h2>
+            <div class="h-1.5 w-24 bg-gradient-to-r from-cyan-400 to-pink-500 mx-auto rounded-full mb-4"></div>
+            <p class="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">
+                Каждое направление — это отдельная суперсила. От создания интерактивных трехмерных моделей до обучения нейросетей и разработки мобильных приложений.
+            </p>
+        </div>
+
+        <!-- Core Skills Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- Skill 1: Yandex Services -->
+            <div class="glow-card glass-panel rounded-3xl p-8 border border-white/5 hover-neon-purple flex flex-col justify-between reveal">
+                <div>
+                    <div class="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 text-2xl mb-6 shadow-lg shadow-red-500/10">
+                        <i class="fa-solid fa-y"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Яндекс Сервисы</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        Интеграция с экосистемой Яндекса, работа со Smart Home решениями, API-картами и сервисами автоматизации для создания бесшовного пользовательского опыта.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-purple-400">
+                    <span>Интеграция & API</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Skill 2: Tinkercad -->
+            <div class="glow-card glass-panel rounded-3xl p-8 border border-white/5 hover-neon-cyan flex flex-col justify-between reveal">
+                <div>
+                    <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl mb-6 shadow-lg shadow-cyan-500/10">
+                        <i class="fa-solid fa-cubes"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Tinkercad</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        3D-проектирование прототипов и схемотехника. Симуляция электронных цепей на базе плат Arduino. Создаю цифровые макеты умных устройств с нуля.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-cyan-400">
+                    <span>3D & Схемотехника</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Skill 3: Minecraft Education -->
+            <div class="glow-card glass-panel rounded-3xl p-8 border border-white/5 hover-neon-purple flex flex-col justify-between reveal">
+                <div>
+                    <div class="w-14 h-14 rounded-2xl bg-green-500/10 border border-green-500/30 flex items-center justify-center text-green-400 text-2xl mb-6 shadow-lg shadow-green-500/10">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Minecraft Education</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        Проектирование логики автоматизации миров. Обучение алгоритмам с помощью агента-робота, запуск интерактивных сценариев на Python и визуальных блоках.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-green-400">
+                    <span>Геймификация & Логика</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Skill 4: Alice Skill training -->
+            <div class="glow-card glass-panel rounded-3xl p-8 border border-white/5 hover-neon-cyan flex flex-col justify-between reveal">
+                <div>
+                    <div class="w-14 h-14 rounded-2xl bg-violet-500/10 border border-violet-500/30 flex items-center justify-center text-violet-400 text-2xl mb-6 shadow-lg shadow-violet-500/10">
+                        <i class="fa-solid fa-microphone-lines"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Собственный навык для Алисы</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        Разработка голосовых интерфейсов (VUI). Обучение голосового помощника Яндекса уникальным сценариям, интеграция вебхуков для управления внешними IoT девайсами.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-violet-400">
+                    <span>Обучение AI ассистента</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Skill 5: Thunkable Mobile apps -->
+            <div class="glow-card glass-panel rounded-3xl p-8 border border-white/5 hover-neon-purple flex flex-col justify-between reveal">
+                <div>
+                    <div class="w-14 h-14 rounded-2xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 text-2xl mb-6 shadow-lg shadow-pink-500/10">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Приложения в Thunkable</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        No-code и low-code мобильная разработка кроссплатформенных приложений для iOS и Android. Быстрое прототипирование UI/UX с интеграцией API.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-pink-400">
+                    <span>Mobile Dev</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Skill 6: Vibe Coding & AI-engineering -->
+            <div class="glow-card glass-panel rounded-3xl p-8 border border-white/5 hover-neon-cyan flex flex-col justify-between reveal">
+                <div>
+                    <div class="w-14 h-14 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400 text-2xl mb-6 shadow-lg shadow-yellow-500/10">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Vibe Coding & AI-Инжиниринг</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        Новый стандарт продуктивности. Проектирование архитектуры в связке с AI-ассистентами (Claude, GPT, Cursor, Copilot). Программирование на уровне смыслов.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-yellow-400">
+                    <span>Будущее разработки</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- About Me Section -->
+    <section id="about" class="py-24 px-4 relative z-10 bg-[#060818]/60 border-y border-white/5">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                
+                <!-- Graphic Element / Mock Portrait Design -->
+                <div class="relative flex justify-center reveal">
+                    <div class="w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-gradient-to-tr from-purple-600 via-pink-500 to-cyan-400 p-1 animate-spin-slow shadow-2xl shadow-purple-500/20 relative">
+                        <div class="w-full h-full bg-[#030712] rounded-full flex flex-col items-center justify-center text-center p-6">
+                            <!-- Floating decorative particles inside the avatar space -->
+                            <i class="fa-solid fa-brain text-5xl sm:text-7xl text-gradient-purple-cyan mb-4 animate-bounce"></i>
+                            <span class="text-slate-200 text-lg font-bold tracking-widest uppercase">КАЛЯН</span>
+                            <span class="text-xs text-cyan-400 tracking-widest mt-1 uppercase">AI СТРАТЕГ</span>
+                        </div>
+                    </div>
+                    <!-- Extra glass circles for depth -->
+                    <div class="absolute -top-6 -left-6 w-24 h-24 glass-panel rounded-3xl border-white/10 flex items-center justify-center text-slate-300 text-2xl rotate-12 shadow-xl animate-bounce">
+                        <i class="fa-solid fa-code"></i>
+                    </div>
+                    <div class="absolute -bottom-6 -right-6 w-28 h-28 glass-panel rounded-full border-white/10 flex items-center justify-center text-cyan-400 text-3xl -rotate-12 shadow-xl">
+                        <i class="fa-solid fa-terminal"></i>
+                    </div>
+                </div>
+
+                <!-- Biography and Ambitions Text -->
+                <div class="reveal">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300 font-semibold mb-6 uppercase">
+                        Кто я такой?
+                    </div>
+                    <h2 class="text-3xl sm:text-5xl font-black text-white mb-6 leading-tight">
+                        Кодинг — это не просто синтаксис, это <span class="text-gradient-purple-cyan">искусство</span>.
+                    </h2>
+                    <p class="text-slate-300 text-base sm:text-lg mb-6 leading-relaxed">
+                        Привет! Меня зовут Калян, и я представляю новое поколение разработчиков. Я не просто учу синтаксис языков программирования — я учусь находить общий язык с интеллектом будущего.
+                    </p>
+                    <p class="text-slate-400 text-sm sm:text-base leading-relaxed mb-8">
+                        Моя цель — автоматизировать рутину, создавать яркие трёхмерные и виртуальные пространства, и делать жизнь людей проще с помощью персонализированных умных помощников. Каждый проект — это вызов моему инженерному мышлению.
+                    </p>
+
+                    <!-- Quote/Accent Area -->
+                    <div class="border-l-4 border-cyan-400 pl-4 py-2 bg-cyan-950/20 rounded-r-xl">
+                        <p class="text-slate-300 italic text-sm">
+                            "Технологии будущего создаются не большими корпорациями, а энтузиастами, которые не боятся экспериментировать прямо сейчас."
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contacts" class="py-24 px-4 relative z-10 max-w-5xl mx-auto">
+        <div class="text-center mb-16 reveal">
+            <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight mb-4">
+                Давай создадим <span class="text-gradient-cyan-pink">что-то крутое</span>
+            </h2>
+            <div class="h-1.5 w-24 bg-gradient-to-r from-pink-500 to-cyan-400 mx-auto rounded-full mb-4"></div>
+            <p class="text-slate-400 max-w-lg mx-auto text-sm sm:text-base">
+                Свяжись со мной, чтобы обсудить сотрудничество, задать вопрос или просто поболтать про Vibe Coding и искусственный интеллект.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch">
+            <!-- Fast Contact Methods (Left Side) -->
+            <div class="md:col-span-5 flex flex-col gap-6 justify-between">
+                
+                <!-- Telegram -->
+                <a href="https://t.me" target="_blank" class="glass-panel p-6 rounded-3xl border-white/5 hover:border-cyan-400/50 flex items-center gap-5 transition-all group hover:-translate-y-1">
+                    <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 text-2xl group-hover:scale-110 transition-transform">
+                        <i class="fa-brands fa-telegram"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider">Telegram</div>
+                        <div class="text-lg font-bold text-white mt-0.5">@kalyan_vibe</div>
+                    </div>
+                </a>
+
+                <!-- GitHub -->
+                <a href="https://github.com" target="_blank" class="glass-panel p-6 rounded-3xl border-white/5 hover:border-purple-400/50 flex items-center gap-5 transition-all group hover:-translate-y-1">
+                    <div class="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400 text-2xl group-hover:scale-110 transition-transform">
+                        <i class="fa-brands fa-github"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider">GitHub</div>
+                        <div class="text-lg font-bold text-white mt-0.5">kalyan-ai-developer</div>
+                    </div>
+                </a>
+
+                <!-- Email -->
+                <a href="mailto:kalyan@example.com" class="glass-panel p-6 rounded-3xl border-white/5 hover:border-pink-400/50 flex items-center gap-5 transition-all group hover:-translate-y-1">
+                    <div class="w-14 h-14 rounded-2xl bg-pink-500/10 flex items-center justify-center text-pink-400 text-2xl group-hover:scale-110 transition-transform">
+                        <i class="fa-regular fa-envelope"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider">Email</div>
+                        <div class="text-lg font-bold text-white mt-0.5">kalyan@vibe.ai</div>
+                    </div>
+                </a>
+
+            </div>
+
+            <!-- Custom Interactive Form (Right Side) -->
+            <div class="md:col-span-7 glass-panel p-8 rounded-3xl border-white/5 relative">
+                <form id="contact-form" onsubmit="handleFormSubmit(event)" class="space-y-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Ваше Имя</label>
+                        <input type="text" required placeholder="Капитан Немо" class="w-full px-4 py-3 bg-[#030712]/60 border border-white/10 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-400/80 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Способ связи (Email/Telegram)</label>
+                        <input type="text" required placeholder="@username или mail@example.com" class="w-full px-4 py-3 bg-[#030712]/60 border border-white/10 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-400/80 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Сообщение</label>
+                        <textarea rows="4" required placeholder="Калян, давай сделаем совместный крутой проект..." class="w-full px-4 py-3 bg-[#030712]/60 border border-white/10 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-400/80 transition-all resize-none"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white font-extrabold rounded-xl transition-all shadow-lg shadow-cyan-500/20 hover:shadow-cyan-400/35 flex items-center justify-center gap-2">
+                        <span>Отправить сообщение</span> <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+
+                <!-- Custom Alert Success Box (Initially Hidden) -->
+                <div id="success-box" class="absolute inset-0 bg-slate-950/95 rounded-3xl flex flex-col items-center justify-center text-center p-8 hidden transition-opacity duration-300">
+                    <div class="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-3xl mb-4 animate-bounce">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold text-white mb-2">Сообщение отправлено!</h4>
+                    <p class="text-slate-400 text-sm max-w-xs mb-6">Калян свяжется с вами сразу, как только настроит очередную нейросеть.</p>
+                    <button onclick="resetContactForm()" class="px-6 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-semibold text-slate-300 transition-all">
+                        Отправить еще раз
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative z-10 border-t border-white/5 py-12 px-4 bg-slate-950/80">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+            <div>
+                <div class="text-lg font-black text-white tracking-widest">KALYAN<span class="text-cyan-400">.AI</span></div>
+                <div class="text-xs text-slate-500 mt-1">© 2026 Kalyan Dev. Все права защищены. Vibe Coding во всей красе.</div>
+            </div>
+            
+            <div class="flex items-center gap-6 text-sm text-slate-400">
+                <a href="#skills" class="hover:text-cyan-400 transition-colors">Направления</a>
+                <a href="#about" class="hover:text-purple-400 transition-colors">Обо мне</a>
+                <a href="#contacts" class="hover:text-pink-400 transition-colors">Контакты</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- 1. Canvas Interactive Particles Background ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        const particleCount = 80;
+        let mouse = { x: null, y: null, radius: 150 };
+
+        // Adjust canvas dimension on load and resize
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.density = (Math.random() * 30) + 10;
+                this.color = Math.random() > 0.5 ? 'rgba(6, 182, 212, 0.4)' : 'rgba(168, 85, 247, 0.4)';
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+
+            update() {
+                // Movement
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                let forceDirectionX = dx / distance;
+                let forceDirectionY = dy / distance;
+
+                // Max distance, relative strength
+                let maxDistance = mouse.radius;
+                let force = (maxDistance - distance) / maxDistance;
+                if (force < 0) force = 0;
+
+                let directionX = (forceDirectionX * force * this.density);
+                let directionY = (forceDirectionY * force * this.density);
+
+                if (distance < mouse.radius) {
+                    this.x -= directionX;
+                    this.y -= directionY;
+                } else {
+                    if (this.x !== this.baseX) {
+                        let dxBack = this.x - this.baseX;
+                        this.x -= dxBack / 15;
+                    }
+                    if (this.y !== this.baseY) {
+                        let dyBack = this.y - this.baseY;
+                        this.y -= dyBack / 15;
+                    }
+                }
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function drawLines() {
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a; b < particles.length; b++) {
+                    let dx = particles[a].x - particles[b].x;
+                    let dy = particles[a].y - particles[b].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 110) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(168, 85, 247, ${0.15 * (1 - distance / 110)})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].draw();
+                particles[i].update();
+            }
+            drawLines();
+            requestAnimationFrame(animate);
+        }
+
+        // Track Mouse
+        window.addEventListener('mousemove', function(e) {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        window.addEventListener('mouseout', function() {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        // Event listener for resizes
+        window.addEventListener('resize', resizeCanvas);
+
+        // --- 2. Interactive Card Hover Glow Tracker ---
+        function setupGlowCards() {
+            const cards = document.querySelectorAll('.glow-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                });
+            });
+        }
+
+        // --- 3. Intersection Observer for Beautiful Fade-in ---
+        function setupRevealObserver() {
+            const reveals = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries, observerInstance) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observerInstance.unobserve(entry.target); // Animate only once
+                    }
+                });
+            }, {
+                threshold: 0.15,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            reveals.forEach(element => {
+                observer.observe(element);
+            });
+        }
+
+        // --- 4. Custom Submit & Contact Form Handlers ---
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const successBox = document.getElementById('success-box');
+            successBox.classList.remove('hidden');
+            successBox.classList.add('flex', 'opacity-100');
+        }
+
+        function resetContactForm() {
+            const successBox = document.getElementById('success-box');
+            const form = document.getElementById('contact-form');
+            form.reset();
+            successBox.classList.add('hidden');
+            successBox.classList.remove('flex', 'opacity-100');
+        }
+
+        // --- 5. Boot Everything on Load ---
+        window.onload = function () {
+            resizeCanvas();
+            animate();
+            setupGlowCards();
+            setupRevealObserver();
+        };
+    </script>
+</body>
+</html>
